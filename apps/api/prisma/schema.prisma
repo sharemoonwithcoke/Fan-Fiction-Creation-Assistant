@@ -1,0 +1,141 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  user
+  admin
+}
+
+enum ProjectType {
+  image
+  forum
+  game
+}
+
+enum AssetType {
+  sprite
+  background
+  music
+  avatar
+  font
+}
+
+enum MigrationStatus {
+  success
+  partial
+  failed
+}
+
+model User {
+  id             String    @id @default(uuid())
+  wechat_openid  String?   @unique
+  email          String?   @unique
+  password_hash  String?
+  nickname       String
+  avatar_url     String?
+  role           UserRole  @default(user)
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+
+  projects       Project[]
+  assets         Asset[]
+  game_saves     GameSave[]
+  templates      Template[]
+  migration_logs MigrationLog[]
+
+  @@map("users")
+}
+
+model GuestToken {
+  token        String    @id @default(uuid())
+  consumed_at  DateTime?
+  expires_at   DateTime
+
+  @@map("guest_tokens")
+}
+
+model Project {
+  id         String      @id @default(uuid())
+  user_id    String
+  type       ProjectType
+  title      String
+  config     Json
+  is_deleted Boolean     @default(false)
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+
+  user       User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  assets     Asset[]
+  game_saves GameSave[]
+
+  @@map("projects")
+}
+
+model Asset {
+  id         String    @id @default(uuid())
+  user_id    String
+  project_id String?
+  type       AssetType
+  name       String
+  url        String
+  size_bytes Int
+  mime_type  String
+  created_at DateTime  @default(now())
+
+  user       User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  project    Project?  @relation(fields: [project_id], references: [id], onDelete: SetNull)
+
+  @@map("assets")
+}
+
+model GameSave {
+  id          String   @id @default(uuid())
+  user_id     String
+  project_id  String
+  slot        Int
+  ink_state   Json
+  scene_state Json
+  created_at  DateTime @default(now())
+
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  project     Project  @relation(fields: [project_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, project_id, slot])
+  @@map("game_saves")
+}
+
+model Template {
+  id           String      @id @default(uuid())
+  user_id      String
+  feature_type ProjectType
+  name         String
+  config       Json
+  is_public    Boolean     @default(false)
+  use_count    Int         @default(0)
+  created_at   DateTime    @default(now())
+
+  user         User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("templates")
+}
+
+model MigrationLog {
+  id                String          @id @default(uuid())
+  guest_token       String
+  user_id           String
+  projects_migrated Int
+  assets_migrated   Int
+  status            MigrationStatus
+  error_detail      String?
+  created_at        DateTime        @default(now())
+
+  user              User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("migration_log")
+}

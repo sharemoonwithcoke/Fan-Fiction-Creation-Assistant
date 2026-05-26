@@ -1,0 +1,33 @@
+{
+  "name": "@fanfic/miniprogram",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev:weapp": "taro build --type weapp --watch",
+    "build:weapp": "taro build --type weapp",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@fanfic/shared": "workspace:*",
+    "@tarojs/components": "4.x",
+    "@tarojs/plugin-framework-react": "4.x",
+    "@tarojs/react": "4.x",
+    "@tarojs/runtime": "4.x",
+    "@tarojs/taro": "4.x",
+    "@tarojs/webpack5-runner": "4.x",
+    "@tanstack/react-query": "^5.45.0",
+    "inkjs": "^2.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zustand": "^4.5.4",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.0",
+    "@tarojs/cli": "4.x",
+    "@types/react": "^18.3.3",
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
+  }
+}

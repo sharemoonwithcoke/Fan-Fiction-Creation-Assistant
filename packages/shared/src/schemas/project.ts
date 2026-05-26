@@ -43,14 +43,30 @@ const ForumProjectConfigSchema = z.object({
   maxHeightPerSlice: z.number().min(100).max(10000),
 })
 
+const ExpressionDefSchema = z.object({ name: z.string(), url: z.string() })
+const CharacterDefSchema = z.object({ id: z.string(), name: z.string(), expressions: z.array(ExpressionDefSchema) })
+const BackgroundDefSchema = z.object({ id: z.string(), name: z.string(), url: z.string() })
+const MusicDefSchema = z.object({ id: z.string(), name: z.string(), url: z.string(), startSec: z.number(), endSec: z.number().nullable(), loop: z.boolean() })
+const VisualAssetMapSchema = z.object({ characters: z.array(CharacterDefSchema), backgrounds: z.array(BackgroundDefSchema), music: z.array(MusicDefSchema) })
+
+const StoryBlockSchema: z.ZodType<unknown> = z.lazy(() =>
+  z.discriminatedUnion('type', [
+    z.object({ id: z.string(), type: z.literal('narration'), text: z.string() }),
+    z.object({ id: z.string(), type: z.literal('dialogue'), characterId: z.string(), expression: z.string(), position: z.enum(['left', 'center', 'right']), text: z.string() }),
+    z.object({ id: z.string(), type: z.literal('scene'), backgroundId: z.string().optional(), musicId: z.string().optional() }),
+    z.object({ id: z.string(), type: z.literal('show'), characterId: z.string(), expression: z.string(), position: z.enum(['left', 'center', 'right']) }),
+    z.object({ id: z.string(), type: z.literal('hide'), characterId: z.string() }),
+    z.object({ id: z.string(), type: z.literal('choice'), options: z.array(z.object({ id: z.string(), label: z.string(), targetSectionId: z.string() })) }),
+    z.object({ id: z.string(), type: z.literal('end') }),
+  ]),
+)
+const StorySectionSchema = z.object({ id: z.string(), name: z.string(), blocks: z.array(StoryBlockSchema) })
+const StoryScriptSchema = z.object({ sections: z.array(StorySectionSchema), startSectionId: z.string() })
+
 const GameProjectConfigSchema = z.object({
   type: z.literal('game'),
-  inkScript: z.string(),
-  assets: z.object({
-    sprites: z.record(z.record(z.string())),
-    backgrounds: z.record(z.string()),
-    music: z.record(z.string()),
-  }),
+  script: StoryScriptSchema,
+  assets: VisualAssetMapSchema,
   dialogueStyle: DialogueStyleConfigSchema,
 })
 

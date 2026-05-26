@@ -49,17 +49,132 @@ export interface ForumProjectConfig {
   maxHeightPerSlice: number
 }
 
-export interface GameProjectConfig {
-  type: 'game'
-  inkScript: string
-  assets: GameAssetMap
-  dialogueStyle: DialogueStyleConfig
+// ── Visual asset definitions ─────────────────────────────────────────────────
+
+export interface CharacterDef {
+  id: string
+  name: string
+  expressions: ExpressionDef[]
 }
 
-export interface GameAssetMap {
-  sprites: Record<string, Record<string, string>>
-  backgrounds: Record<string, string>
-  music: Record<string, string>
+export interface ExpressionDef {
+  name: string
+  url: string
+}
+
+export interface BackgroundDef {
+  id: string
+  name: string
+  url: string
+}
+
+export interface MusicDef {
+  id: string
+  name: string
+  url: string
+  startSec: number
+  endSec: number | null
+  loop: boolean
+}
+
+export interface VisualAssetMap {
+  characters: CharacterDef[]
+  backgrounds: BackgroundDef[]
+  music: MusicDef[]
+}
+
+// ── Visual story script ───────────────────────────────────────────────────────
+
+export type StoryBlock =
+  | NarrationBlock
+  | DialogueBlock
+  | SceneChangeBlock
+  | ShowBlock
+  | HideBlock
+  | ChoiceBlock
+  | EndBlock
+
+export interface NarrationBlock {
+  id: string
+  type: 'narration'
+  text: string
+}
+
+export interface DialogueBlock {
+  id: string
+  type: 'dialogue'
+  characterId: string
+  expression: string
+  position: 'left' | 'center' | 'right'
+  text: string
+}
+
+export interface SceneChangeBlock {
+  id: string
+  type: 'scene'
+  backgroundId?: string
+  musicId?: string
+}
+
+export interface ShowBlock {
+  id: string
+  type: 'show'
+  characterId: string
+  expression: string
+  position: 'left' | 'center' | 'right'
+}
+
+export interface HideBlock {
+  id: string
+  type: 'hide'
+  characterId: string
+}
+
+export interface ChoiceBlock {
+  id: string
+  type: 'choice'
+  options: ChoiceOption[]
+}
+
+export interface ChoiceOption {
+  id: string
+  label: string
+  targetSectionId: string
+}
+
+export interface EndBlock {
+  id: string
+  type: 'end'
+}
+
+export interface StorySection {
+  id: string
+  name: string
+  blocks: StoryBlock[]
+}
+
+export interface StoryScript {
+  sections: StorySection[]
+  startSectionId: string
+}
+
+export interface VisualSceneState {
+  backgroundId: string | null
+  musicId: string | null
+  visibleCharacters: {
+    characterId: string
+    expression: string
+    position: 'left' | 'center' | 'right'
+  }[]
+}
+
+// ── Game project config ───────────────────────────────────────────────────────
+
+export interface GameProjectConfig {
+  type: 'game'
+  script: StoryScript
+  assets: VisualAssetMap
+  dialogueStyle: DialogueStyleConfig
 }
 
 export interface DialogueStyleConfig {

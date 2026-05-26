@@ -10,12 +10,10 @@ export const templateRoutes: FastifyPluginAsync = async (app) => {
 
     return app.prisma.template.findMany({
       where: {
-        ...(query.public
-          ? { is_public: true }
-          : { OR: [{ user_id: sub }, { is_public: true }] }),
+        user_id: sub,
         ...(query.feature_type ? { feature_type: query.feature_type } : {}),
       },
-      orderBy: [{ use_count: 'desc' }, { created_at: 'desc' }],
+      orderBy: { created_at: 'desc' },
     })
   })
 
@@ -29,7 +27,6 @@ export const templateRoutes: FastifyPluginAsync = async (app) => {
         feature_type: body.feature_type,
         name: body.name,
         config: body.config as object,
-        is_public: body.is_public,
       },
     })
 

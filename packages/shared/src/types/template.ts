@@ -6,7 +6,5 @@ export interface Template {
   feature_type: ProjectType
   name: string
   config: ProjectConfig
-  is_public: boolean
-  use_count: number
   created_at: string
 }

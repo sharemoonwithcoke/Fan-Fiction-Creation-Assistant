@@ -214,18 +214,29 @@ export default function ForumPostPage() {
   const bgClass = dark ? 'bg-gray-900' : 'bg-white'
 
   return (
-    <div className="flex h-[calc(100vh-56px)]">
-      {/* Preview */}
-      <div className="flex-1 flex items-start justify-center bg-gray-100 p-8 overflow-auto">
+    <div className="editor-shell">
+      {/* Preview canvas */}
+      <div className="editor-canvas" style={{ alignItems: 'flex-start', paddingTop: 40 }}>
         <div
           ref={previewRef}
-          className={`w-[480px] rounded-lg overflow-hidden shadow-md ${bgClass}`}
+          className="overflow-hidden"
+          style={{
+            width: 480,
+            borderRadius: 12,
+            boxShadow: 'var(--shadow-xl)',
+            background: dark ? '#111827' : '#ffffff',
+          }}
         >
           {postData.metadata.title && (
             <div
-              className={`px-4 py-3 border-b font-semibold ${
-                dark ? 'bg-gray-800 text-white border-gray-700' : 'bg-gray-50 text-gray-900 border-gray-200'
-              }`}
+              style={{
+                padding: '12px 16px',
+                borderBottom: `1px solid ${dark ? '#374151' : '#E5E7EB'}`,
+                fontWeight: 600,
+                fontSize: 15,
+                background: dark ? '#1F2937' : '#F9FAFB',
+                color: dark ? '#F9FAFB' : '#111827',
+              }}
             >
               {postData.metadata.title}
             </div>
@@ -234,87 +245,93 @@ export default function ForumPostPage() {
         </div>
       </div>
 
-      {/* Controls */}
-      <aside className="w-80 bg-white border-l border-gray-200 overflow-y-auto flex flex-col scrollbar-thin">
-        <div className="p-4 border-b border-gray-100 flex gap-2">
+      {/* Controls rail */}
+      <aside className="editor-rail">
+        <div className="rail-section" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="flex-1 text-sm border-none outline-none font-medium text-gray-700"
+            className="input"
+            style={{ border: 'none', background: 'transparent', boxShadow: 'none', padding: '4px 0', fontWeight: 600, flex: 1 }}
           />
           <Button size="sm" variant="secondary" onClick={handleSave}>保存</Button>
         </div>
 
-        <div className="p-4 space-y-4 flex-1">
-          <section>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">风格</label>
-            <div className="flex gap-2">
+        <div className="flex-1 overflow-y-auto">
+          <div className="rail-section">
+            <span className="rail-label">风格</span>
+            <div className="segmented is-block">
               {(['bbs', 'twitter', 'weibo'] as PostStyle[]).map((s) => (
                 <button
                   key={s}
                   onClick={() => setPostData((d) => ({ ...d, style: s }))}
-                  className={`flex-1 py-1.5 rounded text-xs border transition-colors ${
-                    postData.style === s
-                      ? 'bg-primary-100 border-primary-400 text-primary-700'
-                      : 'border-gray-300 text-gray-600 hover:bg-gray-50'
-                  }`}
+                  className={postData.style === s ? 'is-active' : ''}
                 >
                   {s === 'bbs' ? '论坛' : s === 'twitter' ? 'Twitter' : '微博'}
                 </button>
               ))}
             </div>
-          </section>
+          </div>
 
-          <section>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">主题</label>
-            <div className="flex gap-2">
+          <div className="rail-section">
+            <span className="rail-label">主题</span>
+            <div className="segmented is-block">
               {(['light', 'dark'] as const).map((t) => (
                 <button
                   key={t}
                   onClick={() => setPostData((d) => ({ ...d, metadata: { ...d.metadata, theme: t } }))}
-                  className={`flex-1 py-1.5 rounded text-xs border transition-colors ${
-                    postData.metadata.theme === t
-                      ? 'bg-primary-100 border-primary-400 text-primary-700'
-                      : 'border-gray-300 text-gray-600 hover:bg-gray-50'
-                  }`}
+                  className={postData.metadata.theme === t ? 'is-active' : ''}
                 >
                   {t === 'light' ? '浅色' : '深色'}
                 </button>
               ))}
             </div>
-          </section>
+          </div>
 
-          <section>
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">楼层内容</label>
-              <button onClick={addPost} className="text-xs text-primary-600 hover:underline">+ 添加楼层</button>
+          <div className="rail-section">
+            <div className="flex items-center justify-between mb-3">
+              <span className="rail-label" style={{ marginBottom: 0 }}>楼层内容</span>
+              <button
+                onClick={addPost}
+                className="btn is-ghost size-sm"
+                style={{ padding: '3px 8px', fontSize: 12 }}
+              >
+                + 添加楼层
+              </button>
             </div>
-            <div className="space-y-2">
+            <div className="flex flex-col gap-2">
               {postData.posts.map((post) => (
-                <div key={post.id} className="border border-gray-200 rounded-lg overflow-hidden">
+                <div
+                  key={post.id}
+                  style={{ border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden' }}
+                >
                   <div
-                    className="px-3 py-2 bg-gray-50 flex items-center justify-between cursor-pointer"
+                    style={{ padding: '8px 12px', background: 'var(--paper-oat)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
                     onClick={() => setEditingFloor(editingFloor === post.floor ? null : post.floor)}
                   >
-                    <span className="text-sm font-medium text-gray-700">#{post.floor} {post.username}</span>
-                    <span className="text-gray-400 text-xs">{editingFloor === post.floor ? '▲' : '▼'}</span>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--fg-2)' }}>
+                      <span className="chip is-floor" style={{ marginRight: 6 }}>#{post.floor}</span>
+                      {post.username}
+                    </span>
+                    <span style={{ color: 'var(--fg-muted)', fontSize: 11 }}>{editingFloor === post.floor ? '▲' : '▼'}</span>
                   </div>
                   {editingFloor === post.floor && (
-                    <div className="p-3 space-y-2">
+                    <div style={{ padding: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
                       <input
                         value={post.username}
                         onChange={(e) => updatePost(post.floor, { username: e.target.value })}
                         placeholder="用户名"
-                        className="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none"
+                        className="input"
                       />
                       <textarea
                         value={post.content}
                         onChange={(e) => updatePost(post.floor, { content: e.target.value })}
                         rows={4}
-                        className="w-full text-sm border border-gray-300 rounded px-2 py-1 resize-none focus:outline-none"
+                        className="textarea"
+                        style={{ minHeight: 80 }}
                       />
-                      <div className="flex gap-2">
-                        <label className="flex items-center gap-1 text-xs text-gray-600">
+                      <div className="flex items-center gap-2">
+                        <label className="flex items-center gap-1" style={{ fontSize: 12, color: 'var(--fg-3)', cursor: 'pointer' }}>
                           <input
                             type="checkbox"
                             checked={post.isOP}
@@ -324,9 +341,9 @@ export default function ForumPostPage() {
                         </label>
                         <button
                           onClick={() => removePost(post.floor)}
-                          className="text-xs text-red-500 hover:underline ml-auto"
+                          style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--claret)', background: 'none', border: 'none', cursor: 'pointer' }}
                         >
-                          删除楼层
+                          删除
                         </button>
                       </div>
                     </div>
@@ -334,11 +351,11 @@ export default function ForumPostPage() {
                 </div>
               ))}
             </div>
-          </section>
+          </div>
         </div>
 
-        <div className="p-4 border-t border-gray-100">
-          <Button className="w-full" onClick={handleExport} loading={exporting}>
+        <div className="rail-footer">
+          <Button block onClick={handleExport} loading={exporting}>
             导出长图 ZIP
           </Button>
         </div>

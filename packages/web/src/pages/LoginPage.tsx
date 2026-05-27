@@ -30,36 +30,27 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">登录</h1>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <Input
-            label="邮箱"
-            type="email"
-            placeholder="your@email.com"
-            error={errors.email?.message}
-            {...register('email')}
-          />
-          <Input
-            label="密码"
-            type="password"
-            placeholder="••••••••"
-            error={errors.password?.message}
-            {...register('password')}
-          />
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'var(--paper-oat)', backgroundImage: 'var(--grain)', backgroundAttachment: 'fixed' }}>
+      <div className="card w-full" style={{ maxWidth: 380, padding: '40px 36px' }}>
+        <p className="eyebrow mb-2">同人创作助手</p>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--fs-2xl)', fontWeight: 600, marginBottom: 28 }}>
+          欢迎回来
+        </h1>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <Input label="邮箱" type="email" placeholder="your@email.com" error={errors.email?.message} {...register('email')} />
+          <Input label="密码" type="password" placeholder="••••••••" error={errors.password?.message} {...register('password')} />
           {errors.root && (
-            <p className="text-sm text-red-500">{errors.root.message}</p>
+            <p className="field-help is-error">{errors.root.message}</p>
           )}
-          <Button type="submit" loading={isSubmitting} className="w-full">
+          <Button type="submit" loading={isSubmitting} block style={{ marginTop: 4 }}>
             登录
           </Button>
         </form>
-        <p className="text-center text-sm text-gray-500 mt-4">
-          没有账号？{' '}
-          <Link to="/register" className="text-primary-600 hover:underline">
-            注册
-          </Link>
+
+        <p className="text-center mt-5" style={{ fontSize: 'var(--fs-sm)', color: 'var(--fg-3)' }}>
+          还没有账号？{' '}
+          <Link to="/register">注册</Link>
         </p>
       </div>
     </div>

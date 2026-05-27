@@ -215,54 +215,66 @@ function StoryPreview({ script, assets, dialogueStyle }: { script: StoryScript; 
 function StyleEditor({ style, onChange }: { style: DialogueStyleConfig; onChange: (s: DialogueStyleConfig) => void }) {
   function patch(p: Partial<DialogueStyleConfig>) { onChange({ ...style, ...p }) }
 
+  const labelStyle = { fontSize: 13, color: 'rgba(228,184,168,0.7)', width: 80, flexShrink: 0 }
+  const valueStyle = { fontSize: 12, color: 'rgba(228,184,168,0.5)', width: 36, textAlign: 'right' as const }
+
   return (
-    <div className="flex-1 overflow-y-auto p-6 bg-gray-950">
-      <div className="max-w-md space-y-5">
-        <h2 className="text-white font-semibold">对话框样式</h2>
-        <div className="space-y-3">
+    <div className="overflow-y-auto p-6 h-full" style={{ background: '#11112a' }}>
+      <div style={{ maxWidth: 400 }}>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 600, color: '#E4B8A8', marginBottom: 24 }}>
+          对话框样式
+        </h2>
+        <div className="flex flex-col gap-4">
           {[
             { key: 'backgroundColor', label: '背景色' },
             { key: 'textColor', label: '文字颜色' },
             { key: 'namePlateColor', label: '名牌颜色' },
           ].map(({ key, label }) => (
             <div key={key} className="flex items-center gap-3">
-              <span className="text-gray-300 text-sm w-24">{label}</span>
+              <span style={labelStyle}>{label}</span>
               <input
                 type="color"
                 value={style[key as keyof DialogueStyleConfig] as string}
                 onChange={(e) => patch({ [key]: e.target.value } as Partial<DialogueStyleConfig>)}
-                className="h-8 w-14 rounded cursor-pointer border-0"
+                style={{ height: 32, width: 52, borderRadius: 6, border: '1px solid rgba(255,255,255,0.15)', cursor: 'pointer', padding: 2, background: 'none' }}
               />
             </div>
           ))}
 
           {[
-            { key: 'fontSize', label: '字号', min: 14, max: 36 },
+            { key: 'fontSize', label: '字号', min: 14, max: 36, step: 1 },
             { key: 'opacity', label: '透明度', min: 0.3, max: 1, step: 0.05 },
             { key: 'borderRadius', label: '圆角', min: 0, max: 24, step: 2 },
-          ].map(({ key, label, min, max, step = 1 }) => (
+          ].map(({ key, label, min, max, step }) => (
             <div key={key} className="flex items-center gap-3">
-              <span className="text-gray-300 text-sm w-24">{label}</span>
+              <span style={labelStyle}>{label}</span>
               <input
                 type="range" min={min} max={max} step={step}
                 value={style[key as keyof DialogueStyleConfig] as number}
                 onChange={(e) => patch({ [key]: Number(e.target.value) } as Partial<DialogueStyleConfig>)}
-                className="flex-1"
+                className="range flex-1"
               />
-              <span className="text-gray-400 text-sm w-10 text-right">
+              <span style={valueStyle}>
                 {(style[key as keyof DialogueStyleConfig] as number).toFixed(key === 'opacity' ? 2 : 0)}
               </span>
             </div>
           ))}
 
           <div className="flex items-center gap-3">
-            <span className="text-gray-300 text-sm w-24">名牌样式</span>
+            <span style={labelStyle}>名牌样式</span>
             <div className="flex gap-1">
               {(['boxed', 'underline', 'none'] as const).map((v) => (
                 <button
                   key={v}
                   onClick={() => patch({ namePlateStyle: v })}
-                  className={`px-2 py-1 rounded text-xs border transition-colors ${style.namePlateStyle === v ? 'border-primary-400 bg-primary-900/40 text-primary-300' : 'border-gray-700 text-gray-500 hover:text-gray-300'}`}
+                  style={{
+                    padding: '4px 10px', fontSize: 12, borderRadius: 6, cursor: 'pointer',
+                    border: `1px solid ${style.namePlateStyle === v ? 'rgba(138,44,44,0.8)' : 'rgba(255,255,255,0.12)'}`,
+                    background: style.namePlateStyle === v ? 'rgba(138,44,44,0.3)' : 'transparent',
+                    color: style.namePlateStyle === v ? '#E4B8A8' : 'rgba(255,255,255,0.4)',
+                    transition: 'all 150ms',
+                    fontFamily: 'var(--font-body)',
+                  }}
                 >
                   {v === 'boxed' ? '方框' : v === 'underline' ? '下划线' : '无'}
                 </button>
@@ -308,22 +320,36 @@ export default function VisualNovelPage() {
   }
 
   const TAB_ITEMS: { key: EditorTab; label: string }[] = [
-    { key: 'story', label: '📝 剧情' },
-    { key: 'assets', label: '🗂 资源' },
-    { key: 'preview', label: '▶ 预览' },
-    { key: 'style', label: '🎨 样式' },
+    { key: 'story', label: '剧情' },
+    { key: 'assets', label: '资源' },
+    { key: 'preview', label: '预览' },
+    { key: 'style', label: '样式' },
   ]
 
   return (
-    <div className="flex flex-col h-[calc(100vh-56px)] bg-gray-950">
+    <div className="flex flex-col" style={{ height: 'calc(100vh - 56px)', background: '#1a1a2e' }}>
       {/* Top bar */}
-      <div className="flex items-center bg-gray-900 border-b border-gray-800 px-3 gap-2 shrink-0">
-        <div className="flex">
+      <div
+        className="flex items-center shrink-0 px-4 gap-1"
+        style={{ height: 44, background: '#11112a', borderBottom: '1px solid rgba(255,255,255,0.08)' }}
+      >
+        <div className="flex gap-1">
           {TAB_ITEMS.map((t) => (
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`px-4 py-2.5 text-sm transition-colors ${tab === t.key ? 'text-white bg-gray-800' : 'text-gray-400 hover:text-gray-200'}`}
+              style={{
+                padding: '5px 14px',
+                fontSize: 13,
+                fontFamily: 'var(--font-body)',
+                fontWeight: 600,
+                borderRadius: 7,
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'background 200ms, color 200ms',
+                background: tab === t.key ? 'rgba(138,44,44,0.35)' : 'transparent',
+                color: tab === t.key ? '#E4B8A8' : 'rgba(255,255,255,0.45)',
+              }}
             >
               {t.label}
             </button>
@@ -333,7 +359,18 @@ export default function VisualNovelPage() {
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="bg-transparent text-gray-300 text-sm outline-none w-48 border-b border-transparent focus:border-gray-600"
+            style={{
+              background: 'transparent',
+              color: 'rgba(255,255,255,0.7)',
+              fontSize: 13,
+              fontFamily: 'var(--font-body)',
+              outline: 'none',
+              border: 'none',
+              borderBottom: '1px solid transparent',
+              width: 192,
+            }}
+            onFocus={(e) => (e.currentTarget.style.borderBottomColor = 'rgba(255,255,255,0.3)')}
+            onBlur={(e) => (e.currentTarget.style.borderBottomColor = 'transparent')}
           />
           <Button size="sm" variant="secondary" onClick={handleSave} loading={saving}>
             保存

@@ -116,54 +116,45 @@ export default function TextToImagePage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-56px)]">
-      {/* Preview panel */}
-      <div className="flex-1 flex items-center justify-center bg-gray-100 p-8 overflow-auto">
-        <div
-          id={previewId}
-          style={previewStyle}
-          className="shadow-lg select-none"
-        >
+    <div className="editor-shell">
+      {/* Preview canvas */}
+      <div className="editor-canvas">
+        <div id={previewId} style={{ ...previewStyle, boxShadow: 'var(--shadow-xl)' }} className="select-none">
           {config.text}
         </div>
       </div>
 
-      {/* Controls panel */}
-      <aside className="w-80 bg-white border-l border-gray-200 overflow-y-auto flex flex-col scrollbar-thin">
-        <div className="p-4 border-b border-gray-100 flex gap-2">
+      {/* Controls rail */}
+      <aside className="editor-rail">
+        <div className="rail-section" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="flex-1 text-sm border-none outline-none font-medium text-gray-700"
+            className="input"
+            style={{ border: 'none', background: 'transparent', boxShadow: 'none', padding: '4px 0', fontWeight: 600, flex: 1 }}
           />
           <Button size="sm" variant="secondary" onClick={handleSave} loading={createProject.isPending || updateProject.isPending}>
             保存
           </Button>
         </div>
 
-        <div className="p-4 space-y-5 flex-1">
-          {/* Text */}
-          <section>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-              文本内容
-            </label>
+        <div className="flex-1 overflow-y-auto">
+          <div className="rail-section">
+            <span className="rail-label">文本内容</span>
             <textarea
               value={config.text}
               onChange={(e) => patch({ text: e.target.value })}
               rows={6}
-              className="w-full text-sm border border-gray-300 rounded-lg p-2 resize-none focus:outline-none focus:ring-1 focus:ring-primary-500"
+              className="textarea"
             />
-          </section>
+          </div>
 
-          {/* Platform */}
-          <section>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-              输出尺寸
-            </label>
+          <div className="rail-section">
+            <span className="rail-label">输出尺寸</span>
             <select
               value={config.platform}
               onChange={(e) => patch({ platform: e.target.value as ExportPlatform })}
-              className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              className="select"
             >
               {PLATFORMS.map((p) => (
                 <option key={p.value} value={p.value}>{p.label}</option>
@@ -171,159 +162,93 @@ export default function TextToImagePage() {
             </select>
             {config.platform === 'custom' && (
               <div className="flex gap-2 mt-2">
-                <Input
-                  type="number"
-                  placeholder="宽 px"
-                  value={config.customWidth ?? ''}
-                  onChange={(e) => patch({ customWidth: Number(e.target.value) })}
-                />
-                <Input
-                  type="number"
-                  placeholder="高 px"
-                  value={config.customHeight ?? ''}
-                  onChange={(e) => patch({ customHeight: Number(e.target.value) })}
-                />
+                <Input type="number" placeholder="宽 px" value={config.customWidth ?? ''} onChange={(e) => patch({ customWidth: Number(e.target.value) })} />
+                <Input type="number" placeholder="高 px" value={config.customHeight ?? ''} onChange={(e) => patch({ customHeight: Number(e.target.value) })} />
               </div>
             )}
-          </section>
+          </div>
 
-          {/* Typography */}
-          <section>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-              字体排版
-            </label>
-            <div className="space-y-2">
+          <div className="rail-section">
+            <span className="rail-label">字体排版</span>
+            <div className="flex flex-col gap-3">
+              {[
+                { key: 'fontSize', label: '字号', min: 12, max: 72, step: 1, display: (v: number) => String(v) },
+                { key: 'lineHeight', label: '行高', min: 1.2, max: 2.5, step: 0.1, display: (v: number) => v.toFixed(1) },
+                { key: 'padding', label: '内边距', min: 0, max: 120, step: 4, display: (v: number) => String(v) },
+              ].map(({ key, label, min, max, step, display }) => (
+                <div key={key} className="flex gap-2 items-center">
+                  <span style={{ fontSize: 13, color: 'var(--fg-3)', width: 52, flexShrink: 0 }}>{label}</span>
+                  <input
+                    type="range" min={min} max={max} step={step}
+                    value={config[key as keyof ImageProjectConfig] as number}
+                    onChange={(e) => patch({ [key]: Number(e.target.value) } as Partial<ImageProjectConfig>)}
+                    className="range flex-1"
+                  />
+                  <span style={{ fontSize: 12, color: 'var(--fg-3)', width: 28, textAlign: 'right' }}>
+                    {display(config[key as keyof ImageProjectConfig] as number)}
+                  </span>
+                </div>
+              ))}
               <div className="flex gap-2 items-center">
-                <span className="text-sm text-gray-600 w-16 shrink-0">字号</span>
-                <input
-                  type="range" min="12" max="72" step="1"
-                  value={config.fontSize}
-                  onChange={(e) => patch({ fontSize: Number(e.target.value) })}
-                  className="flex-1"
-                />
-                <span className="text-sm w-8 text-right">{config.fontSize}</span>
-              </div>
-              <div className="flex gap-2 items-center">
-                <span className="text-sm text-gray-600 w-16 shrink-0">行高</span>
-                <input
-                  type="range" min="1.2" max="2.5" step="0.1"
-                  value={config.lineHeight}
-                  onChange={(e) => patch({ lineHeight: Number(e.target.value) })}
-                  className="flex-1"
-                />
-                <span className="text-sm w-8 text-right">{config.lineHeight.toFixed(1)}</span>
-              </div>
-              <div className="flex gap-2 items-center">
-                <span className="text-sm text-gray-600 w-16 shrink-0">内边距</span>
-                <input
-                  type="range" min="0" max="120" step="4"
-                  value={config.padding}
-                  onChange={(e) => patch({ padding: Number(e.target.value) })}
-                  className="flex-1"
-                />
-                <span className="text-sm w-8 text-right">{config.padding}</span>
-              </div>
-              <div className="flex gap-2 items-center">
-                <span className="text-sm text-gray-600 w-16 shrink-0">对齐</span>
-                <div className="flex gap-1">
+                <span style={{ fontSize: 13, color: 'var(--fg-3)', width: 52, flexShrink: 0 }}>对齐</span>
+                <div className="segmented is-block">
                   {(['left', 'center', 'right'] as const).map((a) => (
-                    <button
-                      key={a}
-                      onClick={() => patch({ textAlign: a })}
-                      className={`px-2.5 py-1 rounded text-xs border transition-colors ${
-                        config.textAlign === a
-                          ? 'bg-primary-100 border-primary-400 text-primary-700'
-                          : 'border-gray-300 text-gray-600 hover:bg-gray-50'
-                      }`}
-                    >
+                    <button key={a} onClick={() => patch({ textAlign: a })} className={config.textAlign === a ? 'is-active' : ''}>
                       {a === 'left' ? '左' : a === 'center' ? '中' : '右'}
                     </button>
                   ))}
                 </div>
               </div>
             </div>
-          </section>
+          </div>
 
-          {/* Colors */}
-          <section>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-              颜色
-            </label>
-            <div className="space-y-2">
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-gray-600 w-20 shrink-0">文字颜色</span>
-                <input
-                  type="color"
-                  value={config.fontColor}
-                  onChange={(e) => patch({ fontColor: e.target.value })}
-                  className="h-8 w-14 rounded border border-gray-300 cursor-pointer"
-                />
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-gray-600 w-20 shrink-0">背景颜色</span>
-                <input
-                  type="color"
-                  value={config.backgroundColor}
-                  onChange={(e) => patch({ backgroundColor: e.target.value })}
-                  className="h-8 w-14 rounded border border-gray-300 cursor-pointer"
-                />
-              </div>
+          <div className="rail-section">
+            <span className="rail-label">颜色</span>
+            <div className="flex flex-col gap-2">
+              {[
+                { key: 'fontColor', label: '文字' },
+                { key: 'backgroundColor', label: '背景' },
+              ].map(({ key, label }) => (
+                <div key={key} className="flex items-center gap-3">
+                  <span style={{ fontSize: 13, color: 'var(--fg-3)', width: 40 }}>{label}</span>
+                  <input
+                    type="color"
+                    value={config[key as keyof ImageProjectConfig] as string}
+                    onChange={(e) => patch({ [key]: e.target.value } as Partial<ImageProjectConfig>)}
+                    style={{ height: 32, width: 52, borderRadius: 6, border: '1px solid var(--border)', cursor: 'pointer', padding: 2 }}
+                  />
+                </div>
+              ))}
             </div>
-          </section>
+          </div>
 
-          {/* Resolution & Rotation */}
-          <section>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-              导出设置
-            </label>
-            <div className="space-y-2">
+          <div className="rail-section">
+            <span className="rail-label">导出设置</span>
+            <div className="flex flex-col gap-3">
               <div className="flex gap-2 items-center">
-                <span className="text-sm text-gray-600 w-16 shrink-0">分辨率</span>
-                <div className="flex gap-1">
+                <span style={{ fontSize: 13, color: 'var(--fg-3)', width: 52, flexShrink: 0 }}>分辨率</span>
+                <div className="segmented is-block">
                   {([1, 2, 3] as const).map((r) => (
-                    <button
-                      key={r}
-                      onClick={() => patch({ resolution: r })}
-                      className={`px-2.5 py-1 rounded text-xs border transition-colors ${
-                        config.resolution === r
-                          ? 'bg-primary-100 border-primary-400 text-primary-700'
-                          : 'border-gray-300 text-gray-600 hover:bg-gray-50'
-                      }`}
-                    >
-                      {r}x
-                    </button>
+                    <button key={r} onClick={() => patch({ resolution: r })} className={config.resolution === r ? 'is-active' : ''}>{r}x</button>
                   ))}
                 </div>
               </div>
               <div className="flex gap-2 items-center">
-                <span className="text-sm text-gray-600 w-16 shrink-0">旋转</span>
-                <div className="flex gap-1">
+                <span style={{ fontSize: 13, color: 'var(--fg-3)', width: 52, flexShrink: 0 }}>旋转</span>
+                <div className="segmented is-block">
                   {([0, 90, -90, 180] as const).map((r) => (
-                    <button
-                      key={r}
-                      onClick={() => patch({ rotation: r })}
-                      className={`px-2 py-1 rounded text-xs border transition-colors ${
-                        config.rotation === r
-                          ? 'bg-primary-100 border-primary-400 text-primary-700'
-                          : 'border-gray-300 text-gray-600 hover:bg-gray-50'
-                      }`}
-                    >
-                      {r === 0 ? '0°' : r === 90 ? '90°↻' : r === -90 ? '90°↺' : '180°'}
+                    <button key={r} onClick={() => patch({ rotation: r })} className={config.rotation === r ? 'is-active' : ''}>
+                      {r === 0 ? '0°' : r === 90 ? '↻' : r === -90 ? '↺' : '180°'}
                     </button>
                   ))}
                 </div>
               </div>
             </div>
-          </section>
+          </div>
         </div>
 
-        <div className="p-4 border-t border-gray-100">
-          <Button
-            className="w-full"
-            onClick={handleExport}
-            loading={exporting}
-            disabled={!fontsReady}
-          >
+        <div className="rail-footer">
+          <Button block onClick={handleExport} loading={exporting} disabled={!fontsReady}>
             {exporting ? '导出中…' : '导出图片'}
           </Button>
         </div>

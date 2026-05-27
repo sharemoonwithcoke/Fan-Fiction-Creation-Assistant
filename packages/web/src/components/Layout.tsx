@@ -23,40 +23,60 @@ export default function Layout() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between sticky top-0 z-40">
+    <div className="app-shell">
+      <header
+        className="h-14 sticky top-0 z-40 flex items-center justify-between px-6"
+        style={{
+          background: 'var(--bg-elevated)',
+          borderBottom: '1px solid var(--border)',
+          boxShadow: 'var(--shadow-sm)',
+        }}
+      >
         <nav className="flex items-center gap-1">
-          <span className="font-bold text-primary-600 mr-4 text-lg">同人创作助手</span>
-          {NAV_ITEMS.map((item) => (
+          <NavLink
+            to="/"
+            className="mr-5 font-display font-semibold text-lg no-underline"
+            style={{ color: 'var(--claret)', fontFamily: 'var(--font-display)', textDecoration: 'none' }}
+          >
+            同人创作助手
+          </NavLink>
+          {NAV_ITEMS.slice(1).map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               end={item.exact}
               className={({ isActive }) =>
-                `px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-primary-50 text-primary-700'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                `px-3 py-1.5 rounded-md text-sm font-medium transition-colors no-underline ${
+                  isActive ? 'is-active-nav' : 'nav-link'
                 }`
+              }
+              style={({ isActive }) => isActive
+                ? { background: 'var(--accent-soft)', color: 'var(--claret)', textDecoration: 'none' }
+                : { color: 'var(--fg-2)', textDecoration: 'none' }
               }
             >
               {item.label}
             </NavLink>
           ))}
         </nav>
+
         <div className="flex items-center gap-3">
           {user && (
-            <span className="text-sm text-gray-500">{user.nickname}</span>
+            <span className="text-sm" style={{ color: 'var(--fg-3)' }}>{user.nickname}</span>
           )}
           <button
             onClick={handleLogout}
-            className="text-sm text-gray-500 hover:text-gray-800 transition-colors"
+            className="text-sm transition-colors"
+            style={{ color: 'var(--fg-3)', background: 'none', border: 'none', cursor: 'pointer' }}
+            onMouseOver={(e) => (e.currentTarget.style.color = 'var(--fg)')}
+            onMouseOut={(e) => (e.currentTarget.style.color = 'var(--fg-3)')}
           >
             退出
           </button>
         </div>
       </header>
-      <main className="flex-1">
+
+      <main className="app-main">
         <Outlet />
       </main>
     </div>

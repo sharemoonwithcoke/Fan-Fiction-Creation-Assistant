@@ -1,0 +1,87 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+/* 2ch (2channel / Ni-channeru) flavoured chips — monospace, utilitarian, paired with cottage colours */
+.chip {
+  display:inline-flex; align-items:center; gap:4px;
+  font-family:var(--font-mono);
+  font-size:11px; padding:2px 8px;
+  border-radius:4px;             /* 2ch never rounded — keep it boxy */
+  letter-spacing:0;
+  white-space:nowrap;
+}
+.chip.soft   { background:var(--accent-soft); color:var(--claret-deep); }
+.chip.forum  { background:#E5E9D6; color:var(--sage-deep); }
+.chip.game   { background:#F7E9C4; color:#7a5e1e; }
+.chip.b-img  { background:var(--accent-soft); color:var(--claret-deep); border-radius:999px; font-family:var(--font-body); font-weight:600;}
+.chip.b-forum{ background:#E5E9D6; color:var(--sage-deep); border-radius:999px; font-family:var(--font-body); font-weight:600;}
+.chip.b-game { background:#F7E9C4; color:#7a5e1e; border-radius:999px; font-family:var(--font-body); font-weight:600;}
+
+/* 2ch header strip — green anonymous handle on pale cream */
+.ch-strip {
+  background:#EFFFEF; border:1px solid #c9d8c9;
+  padding:6px 10px;
+  display:flex; flex-wrap:wrap; align-items:center; gap:10px;
+  font-family:var(--font-mono); font-size:11.5px; color:#3D2A1F;
+  border-radius:4px;
+}
+.ch-name    { color:#4D5B3C; font-weight:700; }
+.ch-trip    { color:#8A2C2C; }
+.ch-id      { color:#6b6b6b; }
+.ch-sage    { color:#8A2C2C; font-style:italic; }
+.ch-date    { color:#3D2A1F; }
+.ch-num     { color:#4D5B3C; font-weight:700; }
+.ch-ref     { color:#7C8B5C; text-decoration:underline; text-underline-offset:2px; }
+
+.ch-chip {                       /* in-flow chips with 2ch's hard-edge rectangle look */
+  border:1px solid;
+  padding:0 6px; border-radius:2px;
+  font-family:var(--font-mono); font-size:10.5px; font-weight:600; letter-spacing:.04em;
+}
+.ch-chip.op    { color:#8A2C2C; border-color:#8A2C2C; background:#fff; }
+.ch-chip.aa    { color:#4D5B3C; border-color:#4D5B3C; background:#EFFFEF; }
+.ch-chip.pin   { color:#7a5e1e; border-color:#C89B3C; background:#fffaea; }
+.ch-chip.new   { color:#fff; background:#8A2C2C; border-color:#8A2C2C; }
+.ch-chip.dat   { color:#3D2A1F; border-color:var(--paper-cocoa-tint); background:var(--paper-oat); }
+</style>
+</head>
+<body><div class="card" style="gap:10px;padding:18px 22px">
+
+  <!-- intro -->
+  <div class="eyebrow" style="display:flex;align-items:center;gap:8px">
+    2ch · Japanese textboard chrome
+    <span style="font-family:var(--font-body);font-style:italic;text-transform:none;letter-spacing:0;color:var(--ink-tea-stain);font-size:12px">— a fourth thread style: 名無しさん, trip-codes, レス references</span>
+  </div>
+
+  <!-- representative 2ch post-header strip -->
+  <div class="ch-strip">
+    <span class="ch-num">3:</span>
+    <span class="ch-name">名無しさん</span>
+    <span class="ch-trip">◆gW0qK7n.cF</span>
+    <span class="ch-sage">sage</span>
+    <span class="ch-date">2026/05/22(土) 14:21:33.18</span>
+    <span class="ch-id">ID:Hk8/Bx9P</span>
+    <span class="ch-ref">&gt;&gt;1</span>
+  </div>
+
+  <!-- 2ch-flavoured inline chips -->
+  <div class="row" style="gap:8px">
+    <span class="ch-chip op">&gt;&gt;1 OP</span>
+    <span class="ch-chip aa">AA OK</span>
+    <span class="ch-chip pin">★ Pinned</span>
+    <span class="ch-chip new">NEW</span>
+    <span class="ch-chip dat">.dat 1001</span>
+    <span class="chip soft">#3 楼</span>
+    <span class="chip forum">レス 142</span>
+  </div>
+
+  <!-- existing cottage chips kept for parity -->
+  <div class="row" style="gap:8px">
+    <span class="chip b-img">文字成图</span>
+    <span class="chip b-forum">论坛截图</span>
+    <span class="chip b-game">视觉小说</span>
+  </div>
+
+  <div class="eyebrow" style="font-style:italic;letter-spacing:0;text-transform:none;color:var(--ink-tea-stain);font-size:11px">
+    Pill chips = feature tags · square chips = 2ch thread metadata · monospace stays consistent across both
+  </div>
+</div></body></html>

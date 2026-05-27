@@ -1,0 +1,33 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+.field { display:flex; flex-direction:column; gap:4px; flex:1; min-width:200px;}
+.field label { font-family:var(--font-body); font-size:13px; font-weight:600; color:var(--fg-2);}
+.input { font-family:var(--font-body); font-size:14px; padding:9px 12px; border:1px solid var(--border-strong); border-radius:8px; background:#FFFCF5; color:var(--ink-walnut); outline:none; transition:border-color .2s var(--ease-out), box-shadow .2s var(--ease-out);}
+.input::placeholder { color:var(--ink-mist); font-style:italic;}
+.input:focus { border-color:var(--claret); box-shadow:0 0 0 3px var(--accent-soft);}
+.input.error { border-color:var(--claret);}
+.help { font-family:var(--font-body); font-size:12px; color:var(--fg-3); font-style:italic;}
+.help.error { color:var(--claret); font-style:normal;}
+.textarea { resize:none; min-height:48px;}
+</style>
+</head>
+<body><div class="card">
+  <div class="row" style="align-items:flex-start">
+    <div class="field">
+      <label>邮箱 · Email</label>
+      <input class="input" placeholder="your@email.com" value="kettle@cottage.co" />
+      <span class="help">We'll only write with good news.</span>
+    </div>
+    <div class="field">
+      <label>密码</label>
+      <input class="input" type="password" placeholder="••••••••" />
+      <span class="help">At least 8 characters.</span>
+    </div>
+    <div class="field" style="max-width:140px;flex:0 0 140px">
+      <label>项目标题</label>
+      <input class="input error" value="未命名" />
+      <span class="help error">请输入标题</span>
+    </div>
+  </div>
+  <div class="eyebrow">Inputs · italic placeholders · claret focus ring · warm error</div>
+</div></body></html>

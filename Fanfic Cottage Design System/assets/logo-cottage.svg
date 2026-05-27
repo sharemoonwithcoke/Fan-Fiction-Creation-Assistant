@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" fill="none">
+  <defs>
+    
+  </defs>
+  
+  <circle cx="40" cy="40" r="28" stroke="#8A2C2C" stroke-width="1.6" fill="none"></circle>
+  <circle cx="40" cy="40" r="22" stroke="#8A2C2C" stroke-width="0.6" fill="none" opacity="0.5"></circle>
+  
+  <text x="40" y="52" class="display" font-style="italic" font-weight="600" font-size="40" fill="#8A2C2C" text-anchor="middle">&amp;</text>
+  
+  <text x="84" y="36" class="display" font-weight="600" font-size="26" fill="#3D2A1F" letter-spacing="0.5">Fanfic Cottage</text>
+  <text x="84" y="58" class="cjk" font-weight="500" font-size="13" fill="#5C3D2A" letter-spacing="4">同人创作助手</text>
+</svg>

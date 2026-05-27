@@ -1,0 +1,31 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+.btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; font-family:var(--font-body); font-weight:600; font-size:14px; padding:9px 18px; border-radius:10px; border:0; cursor:pointer; transition:all .2s var(--ease-out); text-decoration:none;}
+.btn-primary { background:var(--claret); color:var(--paper-cream); box-shadow:0 2px 0 var(--claret-deep), 0 4px 10px rgba(110,31,31,.25);}
+.btn-primary:hover { background:var(--claret-deep);}
+.btn-secondary { background:#FFFCF5; color:var(--ink-walnut); border:1px solid var(--border-strong); box-shadow:var(--shadow-sm);}
+.btn-ghost { background:transparent; color:var(--fg-2); padding:9px 14px;}
+.btn-ghost:hover { background:var(--paper-oat); color:var(--fg);}
+.btn-sage { background:var(--sage-deep); color:var(--paper-cream); box-shadow:0 2px 0 #3a4530, 0 4px 10px rgba(77,91,60,.25);}
+.btn-danger { background:#FFFCF5; color:var(--claret); border:1px solid var(--claret); box-shadow:var(--shadow-sm);}
+.btn-danger:hover { background:#F2D9D4;}
+.btn-sm { font-size:12px; padding:6px 12px;}
+.btn-lg { font-size:16px; padding:12px 22px;}
+</style>
+</head>
+<body><div class="card">
+  <div class="row">
+    <button class="btn btn-primary">保存 · Save</button>
+    <button class="btn btn-secondary">取消</button>
+    <button class="btn btn-sage">导出图片</button>
+    <button class="btn btn-danger">删除</button>
+    <button class="btn btn-ghost">退出</button>
+  </div>
+  <div class="row">
+    <button class="btn btn-primary btn-sm">Small</button>
+    <button class="btn btn-primary">Medium</button>
+    <button class="btn btn-primary btn-lg">Large</button>
+    <button class="btn btn-primary" disabled style="opacity:.45;cursor:not-allowed">Disabled</button>
+  </div>
+  <div class="eyebrow">Buttons · primary is a "wax-seal" press · sage for safe exports · ghost for low-emphasis</div>
+</div></body></html>
